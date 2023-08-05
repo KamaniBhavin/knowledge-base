@@ -26,5 +26,16 @@ module.exports = {
         "subject-case": [2, "always", "sentence-case"],
         "subject-empty": [2, "never"],
         "header-max-length": [2, "always", 72],
+        "scope-enum": [
+            2,
+            "always",
+            [
+                "fx", // functions
+                "config",
+                "docs",
+                "test",
+                "types",
+            ],
+        ],
     },
 };
