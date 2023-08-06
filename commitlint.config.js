@@ -30,7 +30,8 @@ module.exports = {
             2,
             "always",
             [
-                "fx", // functions
+                "*", // all
+                "f(x)", // functions
                 "config",
                 "docs",
                 "test",

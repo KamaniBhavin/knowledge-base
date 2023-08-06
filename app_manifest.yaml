@@ -1,0 +1,29 @@
+display_information:
+  name: Supa-Slack
+  description: Chat with your personal documents
+  background_color: "#2a5231"
+features:
+  bot_user:
+    display_name: Supa-Slack
+    always_online: false
+oauth_config:
+  redirect_urls:
+    - https://oikrsbhdyfttguchaogp.supabase.co/functions/v1/slack-authorize
+  scopes:
+    bot:
+      - app_mentions:read
+      - channels:history
+      - users:read
+      - users:read.email
+      - chat:write
+      - chat:write.public
+      - chat:write.customize
+      - im:history
+settings:
+  event_subscriptions:
+    request_url: https://oikrsbhdyfttguchaogp.supabase.co/functions/v1/slack-events
+    bot_events:
+      - message.im
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false
