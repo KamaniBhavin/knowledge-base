@@ -3,6 +3,7 @@
     "http/": "https://deno.land/std@0.177.0/http/",
     "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.15.0",
     "langchain/": "https://esm.sh/langchain@0.0.123/",
-    "@slack/types":"https://esm.sh/@slack/types@2.8.0"
+    "@slack/types":"https://esm.sh/@slack/types@2.8.0",
+    "xml/": "https://deno.land/x/xml/"
   }
 }

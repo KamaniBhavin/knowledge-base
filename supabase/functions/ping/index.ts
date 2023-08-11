@@ -1,7 +1,7 @@
 import serve = Deno.serve;
 
 serve((req: Request) => {
-    const sleep = +new URL(req.url).searchParams.get("sleep") || 60;
+    const sleep = +new URL(req.url).searchParams.get("sleep")! || 60;
     const currentTimeStamp = new Date().getTime();
 
     while (new Date().getTime() < currentTimeStamp + sleep * 1000) {
