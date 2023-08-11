@@ -66,7 +66,7 @@ $$
 begin
     perform
         net.http_post(
-                url := 'https://project-ref.functions.supabase.co/crawler',
+                url := 'https://oikrsbhdyfttguchaogp.functions.supabase.co/functions/v1/crawler',
                 headers :='{
                   "Content-Type": "application/json"
                 }'::jsonb,
