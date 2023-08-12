@@ -1,4 +1,5 @@
 import * as cheerio from "cheerio";
+import { Database } from "../_types/generated.types.ts";
 
 /**
  * Fetches the content of a page parses it using cheerio.
@@ -14,3 +15,17 @@ export async function getPageContent(url: string): Promise<string> {
         .get()
         .join("\n");
 }
+
+export const getXML = async (url: string) => {
+    return cheerio.load(await (await fetch(url)).text());
+};
+
+export const parseDocumentTypeFromUrl = (
+    url: string,
+): Database["public"]["Enums"]["url_document_type"] => {
+    if (url.endsWith(".xml")) {
+        return "XML";
+    }
+
+    return "HTML";
+};

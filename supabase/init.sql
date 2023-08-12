@@ -59,18 +59,18 @@ create table crawlers
 );
 
 create or replace function start_crawler(crawler_id bigint)
-    returns void
+    returns crawlers
     language plpgsql
 as
 $$
 begin
     perform
-        net.http_post(
-                url := 'https://oikrsbhdyfttguchaogp.functions.supabase.co/functions/v1/crawler',
+        net.http_get(
+                url := 'https://oikrsbhdyfttguchaogp.functions.supabase.co/functions/v1/crawler?crawlerId=' ||
+                       crawler_id,
                 headers :='{
                   "Content-Type": "application/json"
-                }'::jsonb,
-                body := json_build_object('crawlerId', crawler_id)
+                }'::jsonb
             ) as request_id;
 
     update crawlers c
@@ -109,3 +109,9 @@ select cron.schedule(
         from crawl_next cn;
     $$
            );
+
+alter table crawlers
+    add column parent_id bigint default null references crawlers (id);
+
+alter table crawlers
+    add column slack_webhook varchar default null check ( crawlers.parent_id is null );
