@@ -27,7 +27,7 @@ serve(async (req) => {
     }
 
     // Use cheerio to get the text from the page
-    const text = getPageContent(url);
+    const text = await getPageContent(url);
 
     // Split the text into chunks
     const splitter = new RecursiveCharacterTextSplitter({
