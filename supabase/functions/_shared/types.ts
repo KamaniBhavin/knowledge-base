@@ -81,51 +81,26 @@ export interface ISlackEvent {
         is_enterprise_install: boolean;
     }[];
     authed_users: string[];
-    event?: {
-        type: "app_mention" | "app_home_opened" | "message" | "app_uninstalled";
-    };
+    event?: ISlackHomeMessageEvent;
 }
 
-export interface ISlackAppUnInstalledEvent extends ISlackEvent {
-    event: {
-        type: "app_uninstalled";
-    };
-}
-
-export interface ISlackAppMentionEvent extends ISlackEvent {
-    event: {
-        type: "app_mention";
-        user: string;
-        text: string;
-        ts: string;
-        channel: string;
-        event_ts: string;
-    };
-}
-
-export interface ISlackAppHomeOpenedEvent extends ISlackEvent {
-    event: {
-        type: "app_home_opened";
-        user: string;
-        channel: string;
-        event_ts: string;
-        tab: "home" | "messages" | "search" | "notifications" | "settings";
-        view: { id: string } & HomeView;
-    };
-}
-
-export interface ISlackHomeMessageEvent extends ISlackEvent {
-    event: {
-        client_msg_id?: string;
-        type: "message";
-        user: string;
-        channel: string;
-        text: string;
-        blocks: KnownBlock[];
-        ts: string;
-        event_ts: string;
-        channel_type: "im" | "mpim" | "group" | "channel";
-    };
+export interface ISlackHomeMessageEvent {
+    client_msg_id?: string;
+    type: "message";
+    user: string;
+    channel: string;
+    text: string;
+    blocks: KnownBlock[];
+    ts: string;
+    event_ts: string;
+    channel_type: "im" | "mpim" | "group" | "channel";
+    files?: {
+        id: string;
+        mimetype: string;
+        filetype: string;
+        url_private: string;
+        url_private_download: string;
+    }[];
 }
 
 export interface ISlackUrlVerificationEvent extends ISlackEvent {
@@ -158,33 +133,6 @@ export interface ISlackViewSubmission<State> extends ISlackInteraction {
         state: State;
         bot_id: string;
     };
-}
-
-/********* Slack Block Actions *********/
-export interface ISlackBlockAction extends ISlackInteraction {
-    actions: {
-        type: "button";
-        action_id:
-            | "create_stand_up"
-            | "help"
-            | "delete_stand_up"
-            | "submit_stand_up"
-            | "skip_stand_up"
-            | "on_leave"
-            | "jira_integration"
-            | "cancel_integration";
-        block_id: "main";
-        text: {
-            type: "plain_text" | "mrkdwn";
-            text: string;
-            emoji: boolean;
-        };
-        value: string;
-    }[];
-}
-
-export interface ISlackMessageBlockAction<State> extends ISlackBlockAction {
-    state: State;
 }
 
 /********* Slack Responses *********/
