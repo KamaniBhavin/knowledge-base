@@ -1,11 +1,10 @@
 import { Slack } from "../_shared/slack.ts";
 import serve = Deno.serve;
 import { ISlackEvent, ISlackUrlVerificationEvent } from "../_shared/types.ts";
-import { getSupabaseVectorStore, supabase } from "../_utils/supabase_client.ts";
-import { SlackTeamToken } from "../_types/derived.types.ts";
-import { PostgrestSingleResponse } from "https://esm.sh/v130/@supabase/postgrest-js@1.7.2/dist/module/types.d.ts";
-import { RetrievalQAChain } from "langchain/chains";
-import { OpenAI } from "langchain/llms/openai";
+import { supabase } from "../_utils/supabase_client.ts";
+
+import { getSlackTeamToken } from "../_shared/supabase.ts";
+import { SlackQAChat } from "../_types/derived.types.ts";
 
 serve(async (req) => {
     const event: ISlackEvent = await req.json();
@@ -37,28 +36,20 @@ serve(async (req) => {
         return new Response(null, { status: 200 });
     }
 
-    const token: PostgrestSingleResponse<SlackTeamToken["Row"]> =
-        await supabase()
-            .from("slack_team_tokens")
-            .select("*")
-            .eq("team_id", teamId)
-            .single();
-
-    if (token.error) {
-        console.log(`No token for team ${teamId}`);
-        return new Response(null);
-    }
-
-    const model = new OpenAI({});
-    const retriever = getSupabaseVectorStore().asRetriever();
-    const chain = RetrievalQAChain.fromLLM(model, retriever);
-    const response = await chain.call({ query: text });
-
-    const slack = new Slack(token.data.token);
+    const slack = new Slack(await getSlackTeamToken(teamId));
     await slack.postMessage({
         channel: user,
-        text: response.text,
+        text: "Thinking...🤔",
     });
+
+    await supabase()
+        .from("slack_qa_chats")
+        .insert(<SlackQAChat["Insert"]>{
+            message: text,
+            response_url: "",
+            slack_team_id: teamId,
+            slack_user_id: user,
+        });
 
     return new Response(null);
 });

@@ -1,55 +1,58 @@
 import serve = Deno.serve;
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
-import { SupabaseVectorStore } from "langchain/vectorstores/supabase";
-import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { supabase } from "../_utils/supabase_client.ts";
-import { getPageContent } from "../_utils/get_page_content.ts";
+import { Crawler } from "../_types/derived.types.ts";
+import { Slack } from "../_shared/slack.ts";
+import { getSlackTeamToken } from "../_shared/supabase.ts";
 
 serve(async (req) => {
     const form = await req.formData();
-    const triggerId = form.get("trigger_id");
     const userId = form.get("user_id");
     const teamId = form.get("team_id");
     const url = form.get("text");
+    const responseUrl = form.get("response_url");
 
-    if (!triggerId || !userId || !teamId || !url) {
-        return new Response(null, { status: 400 });
+    if (!userId || !teamId || !url) {
+        return new Response("Missing required parameters", { status: 400 });
     }
 
-    if (!url || typeof url !== "string") {
-        return new Response("No url provided", { status: 400 });
+    if (
+        typeof url !== "string" ||
+        typeof userId !== "string" ||
+        typeof teamId !== "string"
+    ) {
+        return new Response(`Invalid parameter types! 
+            url: ${typeof url}, 
+            userId: ${typeof userId}, 
+            teamId: ${typeof teamId} `);
     }
+
+    const slack = new Slack(await getSlackTeamToken(teamId));
 
     if (!url.match(/^[a-zA-Z]+:\/\//)) {
-        return new Response("URL must start with http:// or https://", {
-            status: 400,
+        await slack.postEphemeral({
+            channel: userId,
+            user: userId,
+            text: "URL is invalid! Must start with http:// or https://",
         });
+
+        return new Response(null);
     }
 
-    // Use cheerio to get the text from the page
-    const text = await getPageContent(url);
+    await supabase()
+        .from("crawlers")
+        .insert(<Crawler["Insert"]>{
+            url,
+            url_document_type: "HTML",
+            priority: 1,
+            slack_webhook: responseUrl,
+            slack_team_id: teamId,
+            slack_user_id: userId,
+        });
 
-    // Split the text into chunks
-    const splitter = new RecursiveCharacterTextSplitter({
-        chunkSize: 1000,
-        chunkOverlap: 200,
+    await slack.postMessage({
+        channel: userId,
+        text: "We are on it!",
     });
-
-    // Create documents from the chunks
-    const documents = await splitter.createDocuments([text]);
-    const texts = documents.map((doc) => doc.pageContent);
-
-    // Embed the documents with metadata and store them in Supabase
-    await SupabaseVectorStore.fromTexts(
-        texts,
-        { url, userId, teamId: userId },
-        new OpenAIEmbeddings(),
-        {
-            client: supabase(),
-            tableName: "documents",
-            queryName: "search_documents",
-        },
-    );
 
     return new Response(null, { status: 200 });
 });
