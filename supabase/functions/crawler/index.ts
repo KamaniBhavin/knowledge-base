@@ -46,4 +46,6 @@ serve(async (req) => {
             await crawl(crawler, crawlXMLStrategy);
             break;
     }
+
+    return new Response(null, { status: 200 });
 });
