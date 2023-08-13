@@ -8,6 +8,14 @@ import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { Slack } from "../_shared/slack.ts";
 import { getSlackTeamToken } from "../_shared/supabase.ts";
 
+/**
+ * This function is a database webhook that is triggered when a new URL index request is added to the database.
+ * It will fetch the page content, split it into chunks, embed the chunks and store them in Supabase.
+ *
+ * @param req: The request object from the database webhook
+ *
+ * @returns A response object
+ */
 serve(async (req) => {
     const { record }: CrawlerInsertEvent = await req.json();
 

@@ -6,6 +6,15 @@ import { getSlackTeamToken } from "../_shared/supabase.ts";
 import { RetrievalQAChain } from "langchain/chains";
 import { OpenAI } from "langchain/llms/openai";
 
+/**
+ * This function is a database webhook that is triggered when a new message is added to the database.
+ * It will fetch the relevant documents from Supabase and then use the OpenAI LLM to generate a response.
+ * This is asynchronous as Slack has 3s timeout.
+ *
+ * @param req: The request object from the database webhook
+ *
+ * @returns Nothing
+ */
 serve(async (req) => {
     const { record }: SlackQAChatInsertEvent = await req.json();
 
