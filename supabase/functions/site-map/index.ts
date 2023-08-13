@@ -54,11 +54,5 @@ serve(async (req) => {
         text: "We are on it!",
     });
 
-    return new Response(
-        JSON.stringify({ message: "Site index request accepted" }),
-        {
-            status: 200,
-            headers: { "Content-Type": "application/json" },
-        },
-    );
+    return new Response(null);
 });
