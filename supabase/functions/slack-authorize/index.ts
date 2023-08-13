@@ -3,6 +3,14 @@ import { Slack } from "../_shared/slack.ts";
 import { supabase } from "../_utils/supabase_client.ts";
 import { SlackTeamToken } from "../_types/derived.types.ts";
 
+/**
+ * Slack OAuth endpoint
+ * This function is called when a user installs the app to their workspace.
+ *
+ * @param req: OAuth request object from Slack
+ *
+ * @returns A redirect to slack.com
+ */
 serve(async (req) => {
     const code = new URL(req.url).searchParams.get("code");
 

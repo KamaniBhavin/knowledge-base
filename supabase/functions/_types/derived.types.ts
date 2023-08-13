@@ -1,3 +1,4 @@
+/** Wrapper types on top of the generated types to make them easier to use */
 import { Database } from "./generated.types.ts";
 
 export type SlackTeamToken = Database["public"]["Tables"]["slack_team_tokens"];

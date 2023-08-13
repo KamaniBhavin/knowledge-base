@@ -1,5 +1,8 @@
 import serve = Deno.serve;
 
+/**
+ * Ping endpoint for testing.
+ */
 serve((req: Request) => {
     const sleep = +new URL(req.url).searchParams.get("sleep")! || 60;
     const currentTimeStamp = new Date().getTime();

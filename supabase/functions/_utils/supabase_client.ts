@@ -3,6 +3,9 @@ import { createClient } from "@supabase/supabase-js";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { SupabaseVectorStore } from "langchain/vectorstores/supabase";
 
+/**
+ * Creates a new Supabase client
+ */
 export function supabase() {
     return createClient<Database>(
         Deno.env.get("SUPABASE_URL"),
@@ -10,6 +13,9 @@ export function supabase() {
     );
 }
 
+/**
+ * Creates a new SupabaseVectorStore with the OpenAIEmbeddings
+ */
 export function getSupabaseVectorStore() {
     return new SupabaseVectorStore(new OpenAIEmbeddings(), {
         client: supabase(),

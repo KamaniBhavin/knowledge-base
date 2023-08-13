@@ -2,10 +2,18 @@ import { Slack } from "../_shared/slack.ts";
 import serve = Deno.serve;
 import { ISlackEvent, ISlackUrlVerificationEvent } from "../_shared/types.ts";
 import { supabase } from "../_utils/supabase_client.ts";
-
 import { getSlackTeamToken } from "../_shared/supabase.ts";
 import { SlackQAChat } from "../_types/derived.types.ts";
 
+/**
+ * This is the function that captures Slack events.
+ * We are interested in the message event.
+ * When a message is sent to the bot, we will store it in the database. We do this as Slack has 3s timeout and querying a LLM is a time-consuming process.
+ * So, we store the message and asynchronously query the LLM and send the response back to the user.
+ *
+ * @param req: Slack event request object
+ *
+ */
 serve(async (req) => {
     const event: ISlackEvent = await req.json();
 

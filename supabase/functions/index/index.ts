@@ -4,6 +4,12 @@ import { Crawler } from "../_types/derived.types.ts";
 import { Slack } from "../_shared/slack.ts";
 import { getSlackTeamToken } from "../_shared/supabase.ts";
 
+/**
+ * This function is a database webhook that is triggered when a new URL index request is added to the database.
+ * It will check if the URL is valid and then add it for crawling.
+ *
+ * @param req: The request object from the database webhook
+ */
 serve(async (req) => {
     const form = await req.formData();
     const userId = form.get("user_id");
