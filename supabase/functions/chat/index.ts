@@ -19,7 +19,10 @@ serve(async (req) => {
     const { record }: SlackQAChatInsertEvent = await req.json();
 
     const model = new OpenAI({});
-    const retriever = getSupabaseVectorStore().asRetriever();
+    const retriever = getSupabaseVectorStore().asRetriever(3, {
+        userId: record.slack_user_id,
+        teamId: record.slack_team_id,
+    });
     const chain = RetrievalQAChain.fromLLM(model, retriever);
     const response = await chain.call({ query: record.message });
 
