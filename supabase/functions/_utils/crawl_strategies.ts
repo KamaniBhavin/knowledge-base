@@ -28,13 +28,9 @@ export const crawl = async (
             return;
         }
 
-        await Promise.all(
-            newCrawlers.map((crawler) => {
-                return supabase()
-                    .from("crawlers")
-                    .insert(<Crawler["Insert"]>crawler);
-            }),
-        );
+        await supabase()
+            .from("crawlers")
+            .insert(newCrawlers.map((crawler) => crawler));
     } catch (error) {
         crawler.failed_at = new Date().toDateString();
     }
@@ -58,7 +54,6 @@ export const crawlXMLStrategy: CrawlStrategy = async (
             url: url,
             url_document_type: parseDocumentTypeFromUrl(url),
             priority: 50,
-            parent_id: crawler.id,
             slack_team_id: crawler.slack_team_id,
             slack_user_id: crawler.slack_user_id,
         };
