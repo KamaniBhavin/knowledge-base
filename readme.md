@@ -73,7 +73,8 @@ The bot is built using the following technologies:
 2. Slack API
 3. OpenAI API (GPT-3)
 4. pg_vector extension
-5. Other libraries(Eslint, Prettier, commit-lint, husky, lint-staged, typescript);
+5. LangChain.js
+6. Other libraries(Eslint, Prettier, commit-lint, husky, lint-staged, typescript);
 
 ### What are the future plans?
 1. Support for more file types like pdf, docs, etc.
